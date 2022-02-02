@@ -1,0 +1,77 @@
+name: build
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  PYTHONIOENCODING: "utf-8" # For log color
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macOS-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+
+      - name: Get Poetry home path
+        id: poetry-home
+        run: |
+          if [ ${{ runner.os }} == "ubuntu-latest" ]; then
+            path="C:/Users/runneradmin/AppData/Roaming/Python/Scripts"
+          else
+            path="$HOME/.local/"
+          fi
+          echo ::set-output name=path::$path
+
+      - name: Get full Python version
+        id: full-py-version
+        run: echo ::set-output name=version::$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))")
+
+      - name: Cache ${{ steps.poetry-home.outputs.path }}
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.poetry-home.outputs.path }}
+          key: poetry-${{ runner.os }}-${{ steps.full-py-version.outputs.version }}
+
+      - name: Cache ./.venv
+        id: cache-venv
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: poetry-${{ runner.os }}-${{ steps.full-py-version.outputs.version }}
+
+      - uses: snok/install-poetry@v1
+        with:
+          virtualenvs-in-project: true
+        env:
+          POETRY_HOME: ${{ steps.poetry-home.outputs.path }}
+
+      - name: Install dependencies
+        run: |
+          poetry install
+          poetry run pip install -U pyqt6
+
+      - name: Install mac dependencies
+        if: runner.os == 'macOS'
+        run: brew install create-dmg
+
+      - name: Create installer
+        run: poetry run python -m pyautolab.create_installer
+
+      - name: Archive app
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ runner.os }}-executable
+          path: dist/*

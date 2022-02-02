@@ -1,0 +1,25 @@
+{
+    "name": "Runner",
+    "entry_point": "pyautolab.plugins.runner.main:main",
+    "configuration": {
+        "analysisWindow.console.maximumNumberOfLine": {
+            "description": "Control maximum number of lines in the console of the Analysis Window.",
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 100000
+        },
+        "analysisWindow.graph.antialias": {
+            "description": "Enable or disable graph antialias.",
+            "type": "boolean",
+            "default": false
+        },
+        "analysisWindow.graph.lineWidth": {
+            "description": "Control line width of graph.",
+            "type": "integer",
+            "default": 1,
+            "minimum": 1,
+            "maximum": 5
+        }
+    }
+}

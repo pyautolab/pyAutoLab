@@ -1,0 +1,28 @@
+{
+    "configuration": {
+        "Workspace": {
+            "workspace.welcomeTab": {
+                "description": "Display Welcome tab or not.",
+                "type": "boolean",
+                "default": true
+            }
+        },
+        "System": {
+            "system.defaultFolder": {
+                "description": "The Default folder path to display when the file dialog is opened.",
+                "type": "string",
+                "default": ""
+            },
+            "system.theme": {
+                "description": "Specifies the color theme used in the window.",
+                "type": "string",
+                "default": "auto",
+                "enum": [
+                    "auto",
+                    "dark",
+                    "light"
+                ]
+            }
+        }
+    }
+}

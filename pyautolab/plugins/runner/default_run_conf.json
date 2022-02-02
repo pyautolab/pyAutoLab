@@ -1,0 +1,9 @@
+{
+    "saveToFile": true,
+    "saveFilePath": "",
+    "mode": "control and measure",
+    "showGraph": true,
+    "measuringInterval":100,
+    "continuous": true,
+    "numberOfMeasuringTimes": 100
+}
