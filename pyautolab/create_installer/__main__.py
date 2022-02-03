@@ -89,7 +89,7 @@ def create_windows_installer(target_dir_path: Path, installer_name: str, license
         .replace("$${license_path}", str(license_path))
     )
     _console.log("Creating nsi file...")
-    temp_nis_path = PROJECT_ROOT_PATH / "install.nsi"
+    temp_nis_path = Path.cwd() / "install.nsi"
     temp_nis_path.write_text(nsi_text)
     subprocess.run(["makensis", "install.nsi"])
     temp_nis_path.unlink()
