@@ -8,7 +8,7 @@ from pathlib import Path
 
 from qtpy.QtCore import QObject, Signal  # type: ignore
 
-from pyautolab import api
+from pyautolab.core.utils.qt_helpers import create_timer
 
 
 class DataReadWorker(QObject):
@@ -20,7 +20,7 @@ class DataReadWorker(QObject):
         self._parent_recv_conn = parent_recv_conn
 
     def start(self) -> None:
-        self._timer_read_data = api.qt_helpers.create_timer(self, timeout=self._on_timer_timeout)
+        self._timer_read_data = create_timer(self, timeout=self._on_timer_timeout)
         self.sig_stopped.connect(self._stop)
         self._timer_read_data.start(10)
 
