@@ -10,7 +10,7 @@ from pyautolab.core.widgets.combobox import PortCombobox
 
 
 class _DeviceWidget(QFrame):
-    def __init__(self, device_status: DeviceStatus, parent: QWidget = None):
+    def __init__(self, device_status: DeviceStatus, parent: QWidget | None = None):
         super().__init__(parent)
         self._device_status = device_status
 

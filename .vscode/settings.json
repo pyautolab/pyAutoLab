@@ -3,8 +3,11 @@
         "absolufy",
         "APPDATA",
         "backticks",
+        "baudrate",
+        "baudrates",
         "codecov",
         "darkdetect",
+        "dataclass",
         "datas",
         "datastruct",
         "dmgbuild",
@@ -69,7 +72,7 @@
     "files.associations": {
         "*.spec": "python"
     },
-    "python.linting.flake8Path": "pflake8",
+    "python.linting.flake8Path": "${workspaceFolder}/.venv/bin/pflake8",
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "python.linting.flake8Enabled": true,

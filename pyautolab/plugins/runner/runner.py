@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import multiprocessing as mp
+from pathlib import Path
 from typing import Callable
 
-from qtpy.QtCore import Qt
+from qtpy.QtCore import Qt  # type: ignore
 
 from pyautolab import api
 from pyautolab.plugins.runner.run_conf import RunConf
@@ -38,7 +39,7 @@ class Runner:
                 continue
             self.data_descriptions.update(parameters)
 
-        self._save_worker = SaveWorker(self.data_descriptions, RunConf().get("saveFilePath"))
+        self._save_worker = SaveWorker(self.data_descriptions, Path(RunConf().get("saveFilePath")))
         self._save_process = mp.Process(target=self._save_worker.start)
         self._save_process.daemon = True
 

@@ -1,11 +1,10 @@
 import sys
 from multiprocessing import freeze_support
 
-from qtpy.QtCore import Qt
+from qtpy.QtCore import Qt  # type: ignore
 from qtpy.QtWidgets import QApplication
 
-# Need to import qtawesome after importing Qt module
-from pyautolab.app.mainwindow import MainWindow  # isort:skip
+from pyautolab.app.mainwindow import MainWindow
 
 
 def main():

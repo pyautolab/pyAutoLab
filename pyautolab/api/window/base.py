@@ -13,11 +13,11 @@ _main_win: MainWindow | None = find_mainwindow_instance()
 
 def create_window_action(
     text: str = "",
-    icon: QIcon = None,
+    icon: QIcon | None = None,
     toggled=None,
     triggered=None,
-    name: str = None,
-    shortcut: str = None,
+    name: str | None = None,
+    shortcut: str | None = None,
     is_checked: bool = False,
     is_checkable: bool = False,
     enable: bool = True,

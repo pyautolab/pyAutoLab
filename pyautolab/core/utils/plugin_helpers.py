@@ -73,9 +73,9 @@ class Controller(QObject):
 
 
 class DeviceTab(QWidget):
-    def __init__(self) -> None:
+    def __init__(self, device: Device) -> None:
         super().__init__()
-        self.device: Device | None = None
+        self.device = device
         self.device_enable = True
 
     def get_controller(self) -> Controller | None:

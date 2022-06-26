@@ -34,36 +34,32 @@ class DataReadWorker(QObject):
 
 
 class SaveWorker:
-    def __init__(self, data_description: dict[str, str], save_file: str) -> None:
+    def __init__(self, data_info: dict[str, str], save_file_path: Path) -> None:
         super().__init__()
         self._child_recv_conn, self.parent_send_conn = mp.Pipe(duplex=False)
-        self._data_description = data_description
+        self._data_info = data_info
         self.stop_event = mp.Event()
-        self._save_file_path = self._rename_sequence_num(save_file)
+        self._save_file_path = self._rename_sequence_num(save_file_path)
 
-    def _rename_sequence_num(self, file_path: str) -> str:
-        save_file = Path(file_path)
-        save_file_name = save_file.name
-        if save_file.exists():
-            compile_path = re.compile(r"\)[0-9]+\(")
-            match = compile_path.search(save_file_name[::-1])
+    @staticmethod
+    def _rename_sequence_num(save_file_path: Path) -> Path:
+        if save_file_path.exists():
+            pattern_sequence = re.compile(r"\)[0-9]+\(_")
+            match = pattern_sequence.match(save_file_path.stem[::-1])
             if match is None:
-                extensions = "".join(save_file.suffixes)
-                save_file_path_no_suffixes = file_path[: -len(extensions)]
-                return self._rename_sequence_num(f"{save_file_path_no_suffixes}_(1){extensions}")
-            match_text = match.group()
-            match_text_remove_brackets = match_text[1:-1]
-            increment = int(match_text_remove_brackets[::-1]) + 1
-            text_replace = compile_path.sub(f"){str(increment)[::-1]}(", file_path[::-1], 1)
-            return self._rename_sequence_num(text_replace[::-1])
-        return file_path
+                new_file_path = Path(f"{save_file_path.with_suffix('')}_(1){save_file_path.suffix}")
+                return SaveWorker._rename_sequence_num(new_file_path)
+
+            increment = int(match.group().replace("(", "").replace(")", "").replace("_", "")[::-1]) + 1
+            new_file_name = pattern_sequence.sub(f"){str(increment)[::-1]}(_", save_file_path.stem[::-1], 1)[::-1]
+            return SaveWorker._rename_sequence_num(save_file_path.parent / f"{new_file_name}{save_file_path.suffix}")
+        return save_file_path
 
     def start(self) -> None:
-        with open(self._save_file_path, "w", encoding="utf-8-sig", newline="") as f:
-            header = [f"{name}[{unit}]" for name, unit in self._data_description.items()]
+        with self._save_file_path.open("w", encoding="utf-8-sig", newline="") as f:
+            header = [f"{name}[{unit}]" for name, unit in self._data_info.items()]
             f.write(",".join(header) + "\n")
-            fieldnames = [name for name, _ in self._data_description.items()]
-            writer = csv.DictWriter(f, fieldnames)
+            writer = csv.DictWriter(f, self._data_info.keys())
             while not self.stop_event.is_set():
                 if self._child_recv_conn.poll():
                     writer.writerow(self._child_recv_conn.recv())

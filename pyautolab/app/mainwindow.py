@@ -98,24 +98,21 @@ class MainWindow(QMainWindow):
         app.setPalette(qdarktheme.load_palette(theme))
         pg.setConfigOption("background", "k" if theme == "dark" else "w")
 
-    @Slot()  # type: ignore
+    @Slot()
     def open_device_manager(self) -> None:
         DeviceManager(self.device_statuses, self).exec()
-        for i in range(len(self.device_statuses)):
-            if self.device_statuses[i].is_connected:
-                self.ui.workspace.enable_tab(self.device_statuses[i].name)
-                tab = self.ui.workspace.get_device_tab(self.device_statuses[i].name)
-                if tab is not None:
-                    tab.device = self.device_statuses[i].device
+        for device_status in self.device_statuses:
+            if device_status.is_connected:
+                self.ui.workspace.enable_tab(device_status.name)
             else:
-                self.ui.workspace.disable_tab(self.device_statuses[i].name)
+                self.ui.workspace.disable_tab(device_status.name)
 
-    @Slot()  # type: ignore
+    @Slot()
     def _open_settings_tab(self) -> None:
         settings_tab = SettingsTab(self, self.settings)
         self.ui.workspace.add_tab(settings_tab, "Settings", True)
 
-    @Slot()  # type: ignore
+    @Slot()
     def _open_plugin_manager(self) -> None:
         plugin_folder_path = get_pyautolab_data_folder_path() / "plugins"
         if not plugin_folder_path.exists():
@@ -144,7 +141,9 @@ class WelcomeTab(QWidget):
         self._check_box = QCheckBox("Show welcome page on startup")
 
         # Setup signal slot
-        self._check_box.stateChanged.connect(lambda is_checked: win.settings.add("workspace.welcomeTab", is_checked))
+        self._check_box.stateChanged.connect(  # type: ignore
+            lambda is_checked: win.settings.add("workspace.welcomeTab", is_checked)
+        )
         self._check_box.setChecked(True)
 
         # Setup UI
