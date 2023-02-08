@@ -1,64 +1,27 @@
-from __future__ import annotations
+from pathlib import Path
+from typing import Literal
 
 from qtpy.QtCore import Qt
-from qtpy.QtGui import QAction, QIcon
-from qtpy.QtWidgets import QMessageBox
+from qtpy.QtWidgets import QDialogButtonBox
 
-from pyautolab.app.mainwindow import MainWindow
-from pyautolab.core.utils.qt_helpers import create_action, create_timer, find_mainwindow_instance
-from pyautolab.core.widgets.timer import AutoLabTimer
-
-_main_win: MainWindow | None = find_mainwindow_instance()
-
-
-def create_window_action(
-    text: str = "",
-    icon: QIcon | None = None,
-    toggled=None,
-    triggered=None,
-    name: str | None = None,
-    shortcut: str | None = None,
-    is_checked: bool = False,
-    is_checkable: bool = False,
-    enable: bool = True,
-) -> QAction:
-    return create_action(
-        _main_win,
-        text,
-        icon,
-        toggled,
-        triggered,
-        name,
-        shortcut,
-        is_checked,
-        is_checkable,
-        enable,
-    )
+from pyautolab.app.main_window import MainWindow
+from pyautolab.core import qt
 
 
 def create_window_timer(
-    timeout=None, enable_count: bool = False, enable_clock: bool = False, timer_type: Qt.TimerType = None
-) -> AutoLabTimer:
-    return create_timer(_main_win, timeout, enable_count, enable_clock, timer_type)
+    timeout=None, enable_count: bool = False, enable_clock: bool = False, timer_type: Qt.TimerType | None = None
+):
+    return qt.helper.timer(MainWindow.instance, timeout, enable_count, enable_clock, timer_type)
 
 
-def show_question_message(
-    title: str, text: str, buttons: QMessageBox.StandardButton = ...
-) -> QMessageBox.StandardButton:
-    return QMessageBox.question(_main_win, title, text, buttons=buttons)
+def alert(
+    severity: Literal["error", "info", "warning"], *, text: str, buttons: QDialogButtonBox.StandardButton | None = None
+) -> QDialogButtonBox.StandardButton:
+    alert = qt.widgets.Alert(severity, text=text, parent=MainWindow.instance, buttons=buttons)
+    return alert.open()
 
 
-def show_information_message(
-    title: str, text: str, buttons: QMessageBox.StandardButton = ...
-) -> QMessageBox.StandardButton:
-    return QMessageBox.information(_main_win, title, text, buttons=buttons)
-
-
-def show_warning_message(
-    title: str, text: str, buttons: QMessageBox.StandardButton = ...
-) -> QMessageBox.StandardButton:
-    return QMessageBox.warning(_main_win, title, text, buttons)
-
-
-def show_error_message(title: str, text: str, buttons: QMessageBox.StandardButton = ...) -> QMessageBox.StandardButton:
-    return QMessageBox.critical(_main_win, title, text, buttons=buttons)
+def show_save_dialog(
+    title: str | None = None, default_path: str | Path | None = None, filter: str | None = None
+) -> Path | None:
+    return qt.helper.show_save_dialog(title, default_path, filter)

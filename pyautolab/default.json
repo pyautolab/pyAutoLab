@@ -8,11 +8,6 @@
             }
         },
         "System": {
-            "system.defaultFolder": {
-                "description": "The Default folder path to display when the file dialog is opened.",
-                "type": "string",
-                "default": ""
-            },
             "system.theme": {
                 "description": "Specifies the color theme used in the window.",
                 "type": "string",
@@ -23,6 +18,45 @@
                     "light"
                 ]
             }
+        },
+        "Runner": {
+            "runner.console.maximumNumberOfLine": {
+                "description": "Control maximum number of lines in the console of the Analysis Window.",
+                "type": "integer",
+                "default": 100,
+                "minimum": 1,
+                "maximum": 100000
+            },
+            "runner.graph.antialias": {
+                "description": "Enable or disable graph antialias.",
+                "type": "boolean",
+                "default": false
+            },
+            "runner.graph.lineWidth": {
+                "description": "Control line width of graph.",
+                "type": "integer",
+                "default": 1,
+                "minimum": 1,
+                "maximum": 5
+            }
+        },
+        "Communication Monitor": {
+            "communicationMonitor.maximumNumberOfLine": {
+                "description": "Control maximum number of lines in the console of communication monitor.",
+                "type": "integer",
+                "default": 1000,
+                "minimum": 1,
+                "maximum": 100000
+            }
         }
+    },
+    "runConfiguration": {
+        "saveToFile": true,
+        "saveFilePath": "",
+        "mode": "control and measure",
+        "showGraph": true,
+        "measuringInterval": 100,
+        "continuous": true,
+        "numberOfMeasuringTimes": 100
     }
 }

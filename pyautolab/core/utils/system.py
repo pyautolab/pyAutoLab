@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import logging
 import platform
 from pathlib import Path
@@ -28,7 +26,7 @@ def cpu_usage():
 
 
 def search_ports(filter: str) -> list[ListPortInfo]:
-    return [port for port in list_ports.comports() if filter in str(port.description)]
+    return [port for port in list_ports.comports() if filter in port.description]
 
 
 def get_pyautolab_data_folder_path() -> Path:

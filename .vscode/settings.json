@@ -30,6 +30,7 @@
         "numpy",
         "opengl",
         "pflake",
+        "Pixmap",
         "plistlib",
         "psutil",
         "pyautolab",

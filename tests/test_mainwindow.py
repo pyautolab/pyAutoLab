@@ -1,7 +1,7 @@
 import pytest
 from qtpy.QtCore import QTimer
 
-from pyautolab.app.mainwindow import MainWindow
+from pyautolab.app.main_window import MainWindow
 
 
 @pytest.fixture()

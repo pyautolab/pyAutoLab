@@ -1,22 +1,18 @@
-import sys
 from multiprocessing import freeze_support
 
-from qtpy.QtCore import Qt  # type: ignore
-from qtpy.QtWidgets import QApplication
-
-from pyautolab.app.mainwindow import MainWindow
+from pyautolab.app.app import App
+from pyautolab.app.commands import register_default_commands
 
 
 def main():
     freeze_support()
 
-    app = QApplication(sys.argv)
-    app.setApplicationName("pyAutoLab")
-    if hasattr(Qt.ApplicationAttribute, "AA_UseHighDpiPixmaps"):
-        app.setAttribute(Qt.ApplicationAttribute.AA_UseHighDpiPixmaps)  # type: ignore
-    win = MainWindow()
-    win.show()
-    sys.exit(app.exec())
+    app = App()
+
+    register_default_commands()
+    app.load_plugins()
+    app.window.show()
+    app.qt_app.exec()
 
 
 if __name__ == "__main__":

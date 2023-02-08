@@ -1,4 +1,5 @@
 import inspect
+import logging
 import platform
 import shutil
 import subprocess
@@ -7,14 +8,12 @@ from pathlib import Path
 
 import PyInstaller.__main__ as PyInstaller
 from PyInstaller import DEFAULT_DISTPATH
-from rich.console import Console
 
 import pyautolab
 
 PROJECT_ROOT_PATH = Path(inspect.getfile(pyautolab)).parents[1]
 
-
-_console = Console(force_terminal=True)
+logging.basicConfig(level=logging.INFO)
 
 
 def create_pyautolab(spec_file_path: Path, dist_path: Path) -> Path:
@@ -34,7 +33,7 @@ def create_pyautolab(spec_file_path: Path, dist_path: Path) -> Path:
 def output_tar(target_dir_path: Path, tar_file_name: str) -> None:
     tarfile_path = Path(DEFAULT_DISTPATH) / f"{tar_file_name}.tar.gz"
     if tarfile_path.exists():
-        _console.log("Removing previous tar file...")
+        logging.info("Removing previous tar file...")
         tarfile_path.unlink()
     with tarfile.open(tarfile_path.as_posix(), "w:gz") as tar:
         tar.add(target_dir_path, target_dir_path.name)
@@ -43,7 +42,7 @@ def output_tar(target_dir_path: Path, tar_file_name: str) -> None:
 def output_zip(target_dir_path: Path, archive_name: str) -> None:
     archive_path = target_dir_path.parent / archive_name
     if archive_path.exists():
-        _console.log("Removing previous zip file...")
+        logging.info("Removing previous zip file...")
         archive_path.unlink()
     shutil.make_archive(archive_path.as_posix(), "zip", target_dir_path.parent, target_dir_path.name)
 
@@ -62,7 +61,7 @@ def create_dmg(target_dir_path: Path, dmg_file_name: str, license_path: Path) ->
     }
 
     if dmg_path.exists():
-        _console.log("Removing previous installer...")
+        logging.info("Removing previous installer...")
         dmg_path.unlink()
 
     commands = ["create-dmg"]
@@ -88,7 +87,7 @@ def create_windows_installer(target_dir_path: Path, installer_name: str, license
         .replace("$${installer_path}", f"{Path(DEFAULT_DISTPATH) / installer_name}.exe")
         .replace("$${license_path}", str(license_path))
     )
-    _console.log("Creating nsi file...")
+    logging.info("Creating nsi file...")
     temp_nis_path = Path.cwd() / "install.nsi"
     temp_nis_path.write_text(nsi_text)
     subprocess.run(["makensis", "install.nsi"])
@@ -96,24 +95,24 @@ def create_windows_installer(target_dir_path: Path, installer_name: str, license
 
 
 if __name__ == "__main__":
-    _console.log("Creating pyAutoLab...")
+    logging.info("Creating pyAutoLab...")
     pyautolab_spec_path = PROJECT_ROOT_PATH / "pyautolab" / "create_installer" / "pyautolab.spec"
     app_path = create_pyautolab(pyautolab_spec_path, Path(DEFAULT_DISTPATH))
     license_file_path = PROJECT_ROOT_PATH / "pyautolab" / "create_installer" / "LICENSE.txt"
     output_file_name = f"{pyautolab.__title__}-{pyautolab.__version__}"
 
-    _console.log("Archiving the application folder...")
+    logging.info("Archiving the application folder...")
     if platform.system() == "Darwin":
         output_tar(app_path, output_file_name)
     elif platform.system() == "Windows":
         output_zip(app_path, output_file_name)
 
-    _console.log("Creating installer...")
+    logging.info("Creating installer...")
     if platform.system() == "Darwin":
         create_dmg(app_path, output_file_name, license_file_path)
     elif platform.system() == "Windows":
         create_windows_installer(app_path, output_file_name, license_file_path)
 
-    _console.log(f"Removing the {pyautolab.__title__} application folder...")
+    logging.info(f"Removing the {pyautolab.__title__} application folder...")
     shutil.rmtree(app_path)
-    _console.log("Build finished successfully!", style="green")
+    logging.info("Build finished successfully!")
